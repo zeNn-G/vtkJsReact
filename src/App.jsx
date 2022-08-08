@@ -12,8 +12,8 @@ function App() {
       {/* <Start /> */}
       {/* <Poly /> */}
       {/* <ZipHttpReader /> */}
-      {/* <XMLPolyDataWriter /> */}
-      <ItkWasmReader />
+      <XMLPolyDataWriter />
+      {/* <ItkWasmReader /> */}
     </div>
   );
 }

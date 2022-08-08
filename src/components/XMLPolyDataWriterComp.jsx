@@ -1,5 +1,8 @@
 import React, { useRef, useState, useEffect } from "react";
 
+import { getDownloadURL, ref, list, listAll } from "firebase/storage";
+import { storage } from "../fireBase";
+
 import "@kitware/vtk.js/Rendering/Profiles/Geometry";
 
 import vtkFullScreenRenderWindow from "@kitware/vtk.js/Rendering/Misc/FullScreenRenderWindow";
@@ -13,11 +16,21 @@ import vtkXMLWriter from "@kitware/vtk.js/IO/XML/XMLWriter";
 
 import "@kitware/vtk.js/IO/Core/DataAccessHelper/HttpDataAccessHelper";
 
-import vtkTestFile from "../assets/vtk-vtp/BlockAppendData.vtp";
-
 const XMLPolyDataWriter = () => {
   const vtkContainerRef = useRef(null);
   const context = useRef(null);
+  const vtkListRef = ref(storage, "vtkFiles/");
+  const [vtkUrl, setVtkUrl] = useState([]);
+
+  useEffect(() => {
+    listAll(vtkListRef).then((response) => {
+      response.items.forEach((item) => {
+        getDownloadURL(item).then((url) => {
+          setVtkUrl((prev) => [...prev, url]);
+        });
+      });
+    });
+  }, []);
 
   useEffect(() => {
     if (!context.current) {
@@ -36,7 +49,7 @@ const XMLPolyDataWriter = () => {
       const writerReader = vtkXMLPolyDataReader.newInstance();
 
       reader
-        .setUrl(`https://kitware.github.io/vtk-js/data/cow.vtp`, {
+        .setUrl(`${vtkUrl}`, {
           loadData: true,
         })
         .then(() => {
