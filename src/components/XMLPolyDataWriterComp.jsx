@@ -13,6 +13,8 @@ import vtkXMLWriter from "@kitware/vtk.js/IO/XML/XMLWriter";
 
 import "@kitware/vtk.js/IO/Core/DataAccessHelper/HttpDataAccessHelper";
 
+import vtkTestFile from "../assets/vtk-vtp/BlockAppendData.vtp";
+
 const XMLPolyDataWriter = () => {
   const vtkContainerRef = useRef(null);
   const context = useRef(null);
@@ -40,20 +42,31 @@ const XMLPolyDataWriter = () => {
         .then(() => {
           const fileContents = writer.write(reader.getOutputData());
 
-          // Try to read it back.
           const textEncoder = new TextEncoder();
           writerReader.parseAsArrayBuffer(textEncoder.encode(fileContents));
           renderer.resetCamera();
           renderWindow.render();
 
-          const actor = vtkActor.newInstance();
-          const mapper = vtkMapper.newInstance();
-          actor.setMapper(mapper);
-
-          mapper.setInputConnection(writerReader.getOutputPort());
-
-          renderer.addActor(actor);
+          const blob = new Blob([fileContents], { type: "text/plain" });
+          const a = window.document.createElement("a");
+          a.href = window.URL.createObjectURL(blob, { type: "text/plain" });
+          a.download = "cow.vtp";
+          a.text = "Download";
+          a.style.position = "absolute";
+          a.style.left = "50%";
+          a.style.bottom = "10px";
+          document.body.appendChild(a);
+          a.style.background = "white";
+          a.style.padding = "5px";
         });
+
+      const actor = vtkActor.newInstance();
+      const mapper = vtkMapper.newInstance();
+      actor.setMapper(mapper);
+
+      mapper.setInputConnection(writerReader.getOutputPort());
+
+      renderer.addActor(actor);
 
       context.current = {
         renderer,
