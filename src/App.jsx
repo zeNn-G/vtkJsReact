@@ -4,6 +4,7 @@ import Start from "./components/Start";
 import Poly from "./components/Poly";
 import ZipHttpReader from "./components/ZipHttpReader";
 import XMLPolyDataWriter from "./components/XMLPolyDataWriterComp";
+import ItkWasmReader from "./components/ItkWasmReader";
 
 function App() {
   return (
@@ -11,7 +12,8 @@ function App() {
       {/* <Start /> */}
       {/* <Poly /> */}
       {/* <ZipHttpReader /> */}
-      <XMLPolyDataWriter />
+      {/* <XMLPolyDataWriter /> */}
+      <ItkWasmReader />
     </div>
   );
 }
