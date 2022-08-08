@@ -10,9 +10,11 @@
   },
   "dependencies": {
     "@kitware/vtk.js": "^25.6.0",
+    "@react-three/fiber": "^8.3.0",
     "firebase": "^9.9.2",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "three": "^0.143.0"
   },
   "devDependencies": {
     "@types/react": "^18.0.15",

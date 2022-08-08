@@ -49,7 +49,7 @@ const XMLPolyDataWriter = () => {
       const writerReader = vtkXMLPolyDataReader.newInstance();
 
       reader
-        .setUrl(`${vtkUrl}`, {
+        .setUrl(`https://kitware.github.io/vtk-js/data/cow.vtp`, {
           loadData: true,
         })
         .then(() => {
@@ -59,18 +59,6 @@ const XMLPolyDataWriter = () => {
           writerReader.parseAsArrayBuffer(textEncoder.encode(fileContents));
           renderer.resetCamera();
           renderWindow.render();
-
-          const blob = new Blob([fileContents], { type: "text/plain" });
-          const a = window.document.createElement("a");
-          a.href = window.URL.createObjectURL(blob, { type: "text/plain" });
-          a.download = "cow.vtp";
-          a.text = "Download";
-          a.style.position = "absolute";
-          a.style.left = "50%";
-          a.style.bottom = "10px";
-          document.body.appendChild(a);
-          a.style.background = "white";
-          a.style.padding = "5px";
         });
 
       const actor = vtkActor.newInstance();

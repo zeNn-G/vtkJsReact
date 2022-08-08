@@ -5,6 +5,7 @@ import Poly from "./components/Poly";
 import ZipHttpReader from "./components/ZipHttpReader";
 import XMLPolyDataWriter from "./components/XMLPolyDataWriterComp";
 import ItkWasmReader from "./components/ItkWasmReader";
+import XMLImageData from "./components/XMLImageData";
 
 function App() {
   return (
@@ -12,8 +13,9 @@ function App() {
       {/* <Start /> */}
       {/* <Poly /> */}
       {/* <ZipHttpReader /> */}
-      <XMLPolyDataWriter />
+      {/* <XMLPolyDataWriter /> */}
       {/* <ItkWasmReader /> */}
+      <XMLImageData />
     </div>
   );
 }

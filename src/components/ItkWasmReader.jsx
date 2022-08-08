@@ -1,5 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 
+import { getDownloadURL, ref } from "firebase/storage";
+import { storage } from "../fireBase";
+
 import "@kitware/vtk.js/Rendering/Profiles/Volume";
 
 import vtkResourceLoader from "@kitware/vtk.js/IO/Core/ResourceLoader";
@@ -14,6 +17,15 @@ import vtkITKHelper from "@kitware/vtk.js/Common/DataModel/ITKHelper";
 const ItkWasmReader = () => {
   const vtkContainerRef = useRef(null);
   const context = useRef(null);
+  const vtkListRef = ref(storage, "vtkFiles/earth.vtp");
+  const [vtkUrl, setVtkUrl] = useState();
+
+  useEffect(() => {
+    getDownloadURL(vtkListRef).then((url) => {
+      setVtkUrl(url);
+      console.log(vtkUrl);
+    });
+  }, []);
 
   useEffect(() => {
     if (!context.current) {
