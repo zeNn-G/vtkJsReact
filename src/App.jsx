@@ -6,6 +6,7 @@ import ZipHttpReader from "./components/ZipHttpReader";
 import XMLPolyDataWriter from "./components/XMLPolyDataWriterComp";
 import ItkWasmReader from "./components/ItkWasmReader";
 import XMLImageData from "./components/XMLImageData";
+import ThreeJsEx from "./components/TreeJsEx";
 
 function App() {
   return (
@@ -15,7 +16,8 @@ function App() {
       {/* <ZipHttpReader /> */}
       {/* <XMLPolyDataWriter /> */}
       {/* <ItkWasmReader /> */}
-      <XMLImageData />
+      {/* <XMLImageData /> */}
+      <ThreeJsEx />
     </div>
   );
 }
