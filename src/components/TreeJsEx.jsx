@@ -11,9 +11,10 @@ const TreeJsEx = () => {
     test.animate();
 
     const loader = new VTKLoader();
-    loader.load("/src/assets/vtk-vtp/SolidAscii--ok.vtk", function (geometry) {
+    loader.load("/src/assets/vtk-vtp/SolidAscii--ok.vtk", (geometry) => {
       geometry.computeVertexNormals();
       geometry.center();
+      geometry.scale(0.1, 0.1, 0.1);
 
       const material = new THREE.MeshLambertMaterial({ color: 0xfffffff });
       const mesh = new THREE.Mesh(geometry, material);
