@@ -16,8 +16,8 @@ function App() {
       {/* <ZipHttpReader /> */}
       {/* <XMLPolyDataWriter /> */}
       {/* <ItkWasmReader /> */}
-      {/* <XMLImageData /> */}
-      <ThreeJsEx />
+      <XMLImageData />
+      {/* <ThreeJsEx /> */}
     </div>
   );
 }

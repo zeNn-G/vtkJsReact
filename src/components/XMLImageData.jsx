@@ -97,36 +97,56 @@ const ClipPlane = () => {
       const renderer = fullScreenRenderer.getRenderer();
       const renderWindow = fullScreenRenderer.getRenderWindow();
 
-      // const reader = vtkHttpDataSetReader.newInstance();
+      const reader = vtkHttpDataSetReader.newInstance({ fetchGzip: true });
 
-      // const writer = vtkXMLImageDataWriter.newInstance();
-      // writer.setFormat(vtkXMLWriter.FormatTypes.BINARY);
-      // writer.setInputConnection(reader.getOutputPort());
+      const writer = vtkXMLImageDataWriter.newInstance();
+      writer.setFormat(vtkXMLWriter.FormatTypes.BINARY);
+      writer.setInputConnection(reader.getOutputPort());
 
-      // const writerReader = vtkXMLImageDataReader.newInstance();
+      const writerReader = vtkXMLImageDataReader.newInstance();
+      reader
+        .setUrl(`https://kitware.github.io/vtk-js/data/volume/headsq.vti`, {
+          loadData: true,
+        })
+        .then(() => {
+          const fileContents = writer.write(reader.getOutputData());
 
-      // reader
-      //   .setUrl(
-      //     `https://mega.nz/file/RnZH2IDb#SWXc8oPZOz0bgZnH6nmIX8dgrhxVBLqj6NOowGioik8`,
-      //     {
-      //       loadData: true,
-      //     }
-      //   )
-      //   .then(() => {
-      //     const fileContents = reader.getOutputData();
+          // Try to read it back.
+          const textEncoder = new TextEncoder();
+          writerReader.parseAsArrayBuffer(textEncoder.encode(fileContents));
+          renderer.resetCamera();
+          renderWindow.render();
+        });
 
-      //     const textEncoder = new TextEncoder();
-      //     writerReader.parseAsArrayBuffer(textEncoder.encode(fileContents));
-      //     renderer.resetCamera();
-      //     renderWindow.render();
-      //   });
+      const actor = vtkVolume.newInstance();
+      const mapper = vtkVolumeMapper.newInstance();
+      mapper.setSampleDistance(1.1);
+      actor.setMapper(mapper);
 
+      mapper.setInputConnection(reader.getOutputPort());
+
+      const ctfun = vtkColorTransferFunction.newInstance();
+      ctfun.addRGBPoint(200.0, 1.0, 1.0, 1.0);
+      ctfun.addRGBPoint(2000.0, 0.0, 0.0, 0.0);
+      const ofun = vtkPiecewiseFunction.newInstance();
+      ofun.addPoint(200.0, 0.0);
+      ofun.addPoint(1200.0, 0.2);
+      ofun.addPoint(4000.0, 0.4);
+      actor.getProperty().setRGBTransferFunction(0, ctfun);
+      actor.getProperty().setScalarOpacity(0, ofun);
+      actor.getProperty().setScalarOpacityUnitDistance(0, 4.5);
+      // actor.getProperty().setInterpolationTypeToNearest();
+      // actor.getProperty().setInterpolationTypeToFastLinear();
+      actor.getProperty().setInterpolationTypeToLinear();
+
+      renderer.addActor(actor);
+
+      // const reader = vtkXMLPolyDataReader.newInstance();
+      // console.log(reader);
       // const actor = vtkVolume.newInstance();
       // const mapper = vtkVolumeMapper.newInstance();
       // mapper.setSampleDistance(1.1);
       // actor.setMapper(mapper);
-
-      // mapper.setInputConnection(reader.getOutputPort());
 
       // const ctfun = vtkColorTransferFunction.newInstance();
       // ctfun.addRGBPoint(0, 85 / 255.0, 0, 0);
@@ -153,55 +173,23 @@ const ClipPlane = () => {
       // actor.getProperty().setSpecular(0.3);
       // actor.getProperty().setSpecularPower(8.0);
 
-      const reader = vtkXMLPolyDataReader.newInstance();
-      console.log(reader);
-      const actor = vtkVolume.newInstance();
-      const mapper = vtkVolumeMapper.newInstance();
-      mapper.setSampleDistance(1.1);
-      actor.setMapper(mapper);
+      // mapper.setInputConnection(reader.getOutputPort());
 
-      const ctfun = vtkColorTransferFunction.newInstance();
-      ctfun.addRGBPoint(0, 85 / 255.0, 0, 0);
-      ctfun.addRGBPoint(95, 1.0, 1.0, 1.0);
-      ctfun.addRGBPoint(225, 0.66, 0.66, 0.5);
-      ctfun.addRGBPoint(255, 0.3, 1.0, 0.5);
+      // reader
+      //   .setUrl(
+      //     "https://mega.nz/file/RnZH2IDb#SWXc8oPZOz0bgZnH6nmIX8dgrhxVBLqj6NOowGioik8"
+      //   )
+      //   .then(() => {
+      //     const enc = new TextEncoder();
+      //     const arrayBuffer = enc.encode(fileContent);
 
-      const ofun = vtkPiecewiseFunction.newInstance();
-      ofun.addPoint(0.0, 0.0);
-      ofun.addPoint(255.0, 1.0);
+      //     reader.parseAsArrayBuffer(arrayBuffer);
+      //     const imageData = reader.getOutputData();
 
-      actor.getProperty().setRGBTransferFunction(0, ctfun);
-      actor.getProperty().setScalarOpacity(0, ofun);
-      actor.getProperty().setScalarOpacityUnitDistance(0, 3.0);
-      actor.getProperty().setInterpolationTypeToLinear();
-      actor.getProperty().setUseGradientOpacity(0, true);
-      actor.getProperty().setGradientOpacityMinimumValue(0, 2);
-      actor.getProperty().setGradientOpacityMinimumOpacity(0, 0.0);
-      actor.getProperty().setGradientOpacityMaximumValue(0, 20);
-      actor.getProperty().setGradientOpacityMaximumOpacity(0, 1.0);
-      actor.getProperty().setShade(true);
-      actor.getProperty().setAmbient(0.2);
-      actor.getProperty().setDiffuse(0.7);
-      actor.getProperty().setSpecular(0.3);
-      actor.getProperty().setSpecularPower(8.0);
-
-      mapper.setInputConnection(reader.getOutputPort());
-
-      reader
-        .setUrl(
-          "https://mega.nz/file/RnZH2IDb#SWXc8oPZOz0bgZnH6nmIX8dgrhxVBLqj6NOowGioik8"
-        )
-        .then(() => {
-          const enc = new TextEncoder();
-          const arrayBuffer = enc.encode(fileContent);
-
-          reader.parseAsArrayBuffer(arrayBuffer);
-          const imageData = reader.getOutputData();
-
-          mapper.setInputData(imageData);
-          renderer.resetCamera();
-          renderWindow.render();
-        });
+      //     mapper.setInputData(imageData);
+      //     renderer.resetCamera();
+      //     renderWindow.render();
+      //   });
 
       context.current = {
         renderer,
